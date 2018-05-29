@@ -10,5 +10,6 @@ FROM alpine:3.7
 RUN apk --no-cache add ca-certificates
 WORKDIR /root/
 COPY --from=0 /go/src/github.com/freme/jenkins/cmd/getFailedStepsLogs/app .
-CMD ["./app"]
+ENTRYPOINT ["./app"]
+CMD ["--help"]
 

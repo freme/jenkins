@@ -3,9 +3,13 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
+	"path"
+	"strings"
 	"time"
 )
 
@@ -160,8 +164,32 @@ func GetLogs(jenkins string, build string, pipeline string) error {
 		}
 	}
 	fmt.Printf("\nLogs of failed steps:\n")
-	for _, log := range logUrls {
-		fmt.Println(jenkins + log)
+	logName := ""
+	for _, logPath := range logUrls {
+		url = jenkins + logPath
+		fmt.Println(url)
+		logPath = strings.TrimRight(logPath, "/")
+		logName = path.Base(path.Dir(logPath)) + ".txt"
+		fmt.Println("LogFile: " + logName)
+		out, err := os.Create(logName)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer out.Close()
+
+		req, _ := http.NewRequest("GET", url, nil)
+		req.Header.Set("Accept", "text/plain")
+		resp, err := myClient.Do(req)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		//fmt.Printf("%v\n", resp)
+		defer resp.Body.Close()
+		_, err = io.Copy(out, resp.Body)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	return nil
