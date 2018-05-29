@@ -63,6 +63,12 @@ type (
 		Result      string `json:"result"`
 		State       string `json:"state"`
 	}
+
+	LogUrl struct {
+		Node string
+		URL  string
+		File string
+	}
 )
 
 func GetJson(url string, target interface{}) error {
@@ -148,7 +154,7 @@ func GetLogs(jenkins string, build string, pipeline string) error {
 	}
 
 	steps := StepsApi{}
-	logUrls := []string{}
+	logUrls := []LogUrl{}
 
 	for _, node := range failedNodes {
 		url = jenkins + node.Href
@@ -157,7 +163,7 @@ func GetLogs(jenkins string, build string, pipeline string) error {
 			if step.Result == "FAILURE" {
 				for _, action := range step.Actions {
 					if action.URLName == "log" {
-						logUrls = append(logUrls, action.Links.Self.Href)
+						logUrls = append(logUrls, LogUrl{URL: action.Links.Self.Href + "?start=0", Node: node.DisplayName})
 					}
 				}
 			}
@@ -165,12 +171,12 @@ func GetLogs(jenkins string, build string, pipeline string) error {
 	}
 	fmt.Printf("\nLogs of failed steps:\n")
 	logName := ""
-	for _, logPath := range logUrls {
-		url = jenkins + logPath
+	for k, logEntry := range logUrls {
+		url = jenkins + logEntry.URL
 		fmt.Println(url)
-		logPath = strings.TrimRight(logPath, "/")
-		logName = path.Base(path.Dir(logPath)) + ".txt"
-		fmt.Println("LogFile: " + logName)
+		logName = path.Base(path.Dir(strings.TrimRight(path.Dir(logEntry.URL), "/"))) + ".txt"
+		logUrls[k].File = logName
+		fmt.Println(logEntry.Node + ": " + logName)
 		out, err := os.Create(logName)
 		if err != nil {
 			log.Fatal(err)
@@ -190,6 +196,12 @@ func GetLogs(jenkins string, build string, pipeline string) error {
 		if err != nil {
 			log.Fatal(err)
 		}
+	}
+
+	propertyJson, _ := json.Marshal(logUrls)
+	err := ioutil.WriteFile("property.json", propertyJson, 0644)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	return nil
