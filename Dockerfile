@@ -9,7 +9,6 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o getFailedStepsLog
 FROM alpine:3.7
 RUN apk --no-cache add ca-certificates
 WORKDIR /root/
-COPY --from=0 /go/src/github.com/freme/jenkins/cmd/getFailedStepsLogs/getFailedStepsLogs /getFailedStepsLogs
-ENTRYPOINT ["/getFailedStepsLogs"]
-CMD ["--help"]
+COPY --from=0 /go/src/github.com/freme/jenkins/cmd/getFailedStepsLogs/getFailedStepsLogs /bin/getFailedStepsLogs
+CMD ["getFailedStepsLogs"]
 

@@ -196,11 +196,20 @@ func GetLogs(jenkins string, build string, pipeline string) error {
 		if err != nil {
 			log.Fatal(err)
 		}
+
+		// makes dealing with in/out-side of docker easier
+		if err := os.Chmod(logName, 0777); err != nil {
+			log.Fatal(err)
+		}
+
 	}
 
 	propertyJson, _ := json.Marshal(logUrls)
 	err := ioutil.WriteFile("property.json", propertyJson, 0644)
 	if err != nil {
+		log.Fatal(err)
+	}
+	if err := os.Chmod("property.json", 0777); err != nil {
 		log.Fatal(err)
 	}
 
