@@ -14,6 +14,8 @@ import (
 
 func main() {
 	var jenkins string
+	var user string
+	var password string
 	var build string
 	var pipeline string
 
@@ -21,7 +23,7 @@ func main() {
 	app.Name = "jobresult"
 	app.Usage = "parser using the blue ocean rest api"
 	app.Action = func(c *cli.Context) error {
-		api.GetLogs(jenkins, build, pipeline)
+		api.GetLogs(jenkins, user, password, build, pipeline)
 		return nil
 	}
 
@@ -32,6 +34,20 @@ func main() {
 			Usage:       "Jenkins Service URL",
 			EnvVar:      "JENKINS_URL",
 			Destination: &jenkins,
+		},
+		cli.StringFlag{
+			Name:        "user, s",
+			Value:       "username",
+			Usage:       "Jenkins Username",
+			EnvVar:      "JENKINS_USER",
+			Destination: &user,
+		},
+		cli.StringFlag{
+			Name:        "password, a",
+			Value:       "password",
+			Usage:       "Jenkins User Password",
+			EnvVar:      "JENKINS_PASSWORD",
+			Destination: &password,
 		},
 		cli.StringFlag{
 			Name:        "build, b",
