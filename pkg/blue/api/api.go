@@ -130,7 +130,7 @@ func GetLogs(jenkins string, user string, password string, build string, pipelin
 			}
 		}
 		if !buildExists {
-			fmt.Printf("build %s not available via API\n", build)
+			return fmt.Errorf("Build %s not available via API", build)
 		}
 	}
 	fmt.Printf("BuildURL: %s\n", url)

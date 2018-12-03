@@ -23,8 +23,7 @@ func main() {
 	app.Name = "jobresult"
 	app.Usage = "parser using the blue ocean rest api"
 	app.Action = func(c *cli.Context) error {
-		api.GetLogs(jenkins, user, password, build, pipeline)
-		return nil
+		return api.GetLogs(jenkins, user, password, build, pipeline)
 	}
 
 	app.Flags = []cli.Flag{
