@@ -13,7 +13,8 @@ import (
 	"time"
 )
 
-var myClient = &http.Client{Timeout: 180 * time.Second}
+// this is nuts - but our jenkins sometimes needs more the 3 minutes to deliver the json blob
+var myClient = &http.Client{Timeout: 300 * time.Second}
 
 type (
 	//https://mholt.github.io/json-to-go/
