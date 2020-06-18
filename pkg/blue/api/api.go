@@ -13,7 +13,7 @@ import (
 	"time"
 )
 
-var myClient = &http.Client{Timeout: 60 * time.Second}
+var myClient = &http.Client{Timeout: 180 * time.Second}
 
 type (
 	//https://mholt.github.io/json-to-go/
