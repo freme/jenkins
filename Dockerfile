@@ -2,7 +2,8 @@ FROM golang:alpine
 RUN apk --no-cache add git
 WORKDIR /go/src/github.com/freme/jenkins
 RUN git clone https://github.com/freme/jenkins.git .
-RUN go get -d ./...
+#RUN GO111MODULE=on go get github.com/urfave/cli/v2
+RUN GO111MODULE=on go get -d ./...
 WORKDIR /go/src/github.com/freme/jenkins/cmd/getFailedStepsLogs
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o getFailedStepsLogs .
 
